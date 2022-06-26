@@ -6,6 +6,8 @@ package-lock.json
 android/.idea
 android/build
 android/app/build
+android/*.hprof
+android/.gradle
 
 
 ios/pods
