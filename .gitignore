@@ -1,0 +1,13 @@
+node_modules
+.idea
+.bundle
+package-lock.json
+
+android/.idea
+android/build
+android/app/build
+
+
+ios/pods
+ios/build
+ios/.xcode.env

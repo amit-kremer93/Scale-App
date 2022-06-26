@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "714577690981",
+    "firebase_url": "https://irrigation-management-app.firebaseio.com",
+    "project_id": "irrigation-management-app",
+    "storage_bucket": "irrigation-management-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714577690981:android:81367da70f80cb0aa1218c",
+        "android_client_info": {
+          "package_name": "com.kremer.scale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714577690981-4kjgmumg2f8cietkitqu4aec2715as50.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7BbaWu5WnltlSd50BuVQyLLE1qzv38_A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714577690981-4kjgmumg2f8cietkitqu4aec2715as50.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "714577690981-qqh5r1na62hmcitjiuv7ab73g30jcrim.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kremer.scale"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
