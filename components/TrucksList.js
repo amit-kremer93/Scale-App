@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { ListItem, Icon, Overlay, Button, Input, Image, FAB } from 'react-native-elements';
+import { ListItem, Icon, Button, FAB } from 'react-native-elements';
 
 const TrucksList = ({ route, navigation }) => {
 	const { truckList, updateTruckList } = route.params;
+	const [simpleState, setSimpleState] = useState(false);
 
 	const [isAddingNewTruck, setIsAddingNewTruck] = useState(false);
 	const [newTruckPlateNumber, setNewTruckPlateNumber] = useState('');
@@ -17,28 +18,40 @@ const TrucksList = ({ route, navigation }) => {
 		setIsAddingNewTruck(false);
 	};
 
+	const handleDeleteTruckFromList = (plateNumber) => {
+		let truckListCopy = Object.assign({}, truckList);
+		delete truckListCopy[plateNumber];
+		delete truckList[plateNumber];
+		updateTruckList(truckListCopy);
+		setSimpleState(!simpleState);
+	};
+
 	return (
 		<View style={styles.truckListScrollView}>
 			<ScrollView onPress={() => console.log('yay')}>
 				{truckList
 					? Object.keys(truckList).map((plateNumber) => (
-							<ListItem.Swipeable disabled={true} style={styles.item} rightContent={<Button title='Delete' icon={{ name: 'delete', color: 'white' }} buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }} />} key={plateNumber} bottomDivider='bottomDivider' onPress={() => console.log('')}>
-								<Icon name='truck' color='black' type='material-community' />
-								<ListItem.Content style={{ width: '100%' }}>
-									<ListItem.Title>{plateNumber}</ListItem.Title>
-								</ListItem.Content>
-								<ListItem.Content />
+							<ListItem.Swipeable
+								disabled={true}
+								style={styles.item}
+								rightContent={<Button title='Delete' icon={{ name: 'delete', color: 'white' }} buttonStyle={{ minHeight: '100%', backgroundColor: 'red' }} onPress={() => handleDeleteTruckFromList(plateNumber)} />}
+								key={plateNumber}
+								bottomDivider='bottomDivider'>
 								<ListItem.Content>
-									<ListItem.Title>{truckList[plateNumber]} KG</ListItem.Title>
+									<ListItem.Title style={{ alignSelf: 'center' }}>{truckList[plateNumber]} KG</ListItem.Title>
 								</ListItem.Content>
+								<ListItem.Content>
+									<ListItem.Title style={{ alignSelf: 'center' }}>{plateNumber}</ListItem.Title>
+								</ListItem.Content>
+								<Icon name='truck' color='black' type='material-community' />
 							</ListItem.Swipeable>
 					  ))
 					: null}
 				{isAddingNewTruck ? (
 					<ListItem>
-						<Icon name='check-circle' color='green' type='material-community' onPress={handleAddNewTruck} />
-						<ListItem.Input placeholder='רכב' textAlign='left' onChangeText={(number) => setNewTruckPlateNumber(number)} />
 						<ListItem.Input placeholder='משקל טרה (ק״ג)' textAlign='center' keyboardType='numeric' onChangeText={(weight) => setNewTruckTare(weight)} />
+						<ListItem.Input placeholder='רכב' textAlign='center' onChangeText={(number) => setNewTruckPlateNumber(number)} />
+						<Icon name='check-circle' color='green' type='material-community' onPress={handleAddNewTruck} />
 					</ListItem>
 				) : null}
 			</ScrollView>

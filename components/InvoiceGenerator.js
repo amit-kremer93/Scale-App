@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { View, StyleSheet, ScrollView, Text, PermissionsAndroid } from 'react-native';
-import { Button, Input } from 'react-native-elements';
+import { Button, Input, Switch } from 'react-native-elements';
+import CheckBox from '@react-native-community/checkbox';
 import storage from '@react-native-firebase/storage';
 import * as constants from './Constants';
 import Toast from 'react-native-toast-message';
 
 const InvoiceGenerator = ({ route, navigation }) => {
 	const { weightReading, userId, howManyScalesLeft, setHowManyScalesLeft, pdfInvoices, setPdfInvoices, truckList } = route.params;
-	const [tareWeight, setTareWeight] = useState(0);
+	const [manualTruckInputSelected, setManualTruckInputSelected] = useState(true);
+	const [tareWeight, setTareWeight] = useState('');
 	const [netWeight, setNetWeight] = useState(0);
 	const [buttonLoading, setButtonLoading] = useState(false);
 	const [scalerName, setScalerName] = useState('');
@@ -21,7 +23,11 @@ const InvoiceGenerator = ({ route, navigation }) => {
 	const [moreInfo, setMoreInfo] = useState('');
 
 	useEffect(() => {
-		let netWeight = weightReading - tareWeight;
+		let localTareWeight = tareWeight;
+		if (['', 0].includes(tareWeight)) {
+			localTareWeight = 0;
+		}
+		let netWeight = weightReading - localTareWeight;
 		setNetWeight(netWeight);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tareWeight]);
@@ -49,20 +55,23 @@ const InvoiceGenerator = ({ route, navigation }) => {
 	};
 
 	const generateInvoiceWithParameters = () => {
-		let newInvoice = constants.INVOICE_TEMPLATE;
-		newInvoice = newInvoice.replace(constants.DATE_NOW, getCurrentDate());
-		newInvoice = newInvoice.replace(constants.HOUR_NOW, getCurrentTime());
-		newInvoice = newInvoice.replace(constants.SCALER_NAME, scalerName.toString());
-		newInvoice = newInvoice.replace(constants.SCALER_PHONE, scalerPhone.toString());
-		newInvoice = newInvoice.replace(constants.ORIGIN, originAddress.toString());
-		newInvoice = newInvoice.replace(constants.DESTINATION, destinationAddress.toString());
-		newInvoice = newInvoice.replace(constants.MATERIAL_TYPE, materialType.toString());
-		newInvoice = newInvoice.replace(constants.MORE_INFO, moreInfo.toString());
-		newInvoice = newInvoice.replace(constants.VEHICLE_NUMBER, vehicleNumber.toString());
-		newInvoice = newInvoice.replace(constants.DRIVER_NAME, driverName.toString());
-		newInvoice = newInvoice.replace(constants.TOTAL_WEIGHT, weightReading.toString());
-		newInvoice = newInvoice.replace(constants.NET_WEIGHT, netWeight.toString());
-		newInvoice = newInvoice.replace(constants.TARE_WEIGHT, tareWeight.toString());
+		let scalingObj = {
+			DATE_NOW: getCurrentDate(),
+			HOUR_NOW: getCurrentTime(),
+			SCALER_NAME: scalerName.toString(),
+			SCALER_PHONE: scalerPhone.toString(),
+			ORIGIN: originAddress.toString(),
+			DESTINATION: destinationAddress.toString(),
+			MATERIAL_TYPE: materialType.toString(),
+			MORE_INFO: moreInfo.toString(),
+			VEHICLE_NUMBER: vehicleNumber.toString(),
+			DRIVER_NAME: driverName.toString(),
+			TOTAL_WEIGHT: weightReading.toString(),
+			NET_WEIGHT: netWeight.toString(),
+			TARE_WEIGHT: tareWeight.toString(),
+		};
+		let newInvoice = constants.generateHTMLFromJSON(scalingObj);
+		console.log(scalingObj);
 		createInvoiceAsPDFAndUpload(newInvoice).then(() => {
 			navigation.goBack();
 			setButtonLoading(false);
@@ -129,6 +138,11 @@ const InvoiceGenerator = ({ route, navigation }) => {
 				});
 			});
 	};
+
+	const handleVehicleCheckBoxChanged = (truckNumber) => {
+		setVehicleNumber(truckNumber);
+		setTareWeight(truckList[truckNumber]);
+	};
 	return (
 		<View style={styles.outerContainer}>
 			<ScrollView>
@@ -191,18 +205,44 @@ const InvoiceGenerator = ({ route, navigation }) => {
 						}}
 						onChangeText={(e) => setDriverName(e)}
 					/>
-					<Input
-						label={'מספר רכב'}
-						rightIcon={{
-							type: 'Fontisto',
-							name: 'chevron-left',
-						}}
-						labelStyle={{
-							textAlign: 'right',
-						}}
-						keyboardType={'numeric'}
-						onChangeText={(e) => setVehicleNumber(e)}
-					/>
+					<View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row', alignContent: 'space-between', width: '100%', marginVertical: 20 }}>
+						<Text style={[{ fontSize: 16 }, manualTruckInputSelected ? null : { fontWeight: 'bold' }]} onPress={() => setManualTruckInputSelected(false)}>
+							בחר מתוך רשימה
+						</Text>
+						<Switch
+							value={manualTruckInputSelected}
+							onValueChange={() => {
+								setManualTruckInputSelected(!manualTruckInputSelected);
+								setTareWeight('');
+							}}
+						/>
+						<Text style={[{ fontSize: 16 }, manualTruckInputSelected ? { fontWeight: 'bold' } : null]} onPress={() => setManualTruckInputSelected(true)}>
+							הכנס רכב ידנית
+						</Text>
+					</View>
+					{manualTruckInputSelected ? (
+						<Input
+							label={'מספר רכב'}
+							rightIcon={{
+								type: 'Fontisto',
+								name: 'chevron-left',
+							}}
+							labelStyle={{
+								textAlign: 'right',
+							}}
+							onChangeText={(e) => setVehicleNumber(e)}
+						/>
+					) : (
+						<View style={{ flexDirection: 'column', alignContent: 'flex-start', justifyContent: 'center', alignItems: 'flex-end', width: '100%', borderColor: '#e6e5ea', borderWidth: 2, borderRadius: 20, marginBottom: 30 }}>
+							{Object.keys(truckList).map((truck) => (
+								<View key={truck} style={{ flexDirection: 'row', marginVertical: 10 }}>
+									<Text style={{ fontSize: 16, marginRight: 10 }}>{truck}</Text>
+									<CheckBox value={truck == vehicleNumber} onValueChange={() => handleVehicleCheckBoxChanged(truck)} />
+								</View>
+							))}
+						</View>
+					)}
+
 					<Input
 						label={'משקל טרה (ק״ג)'}
 						rightIcon={{
@@ -213,8 +253,11 @@ const InvoiceGenerator = ({ route, navigation }) => {
 							textAlign: 'right',
 						}}
 						keyboardType={'numeric'}
-						onChangeText={(e) => setTareWeight(e)}
-					/>
+						onFocus={() => setTareWeight('')}
+						disabled={!manualTruckInputSelected ? true : false}
+						onChangeText={(e) => setTareWeight(e)}>
+						{tareWeight}
+					</Input>
 					<Text style={styles.mainLabels}>פרטי המטען</Text>
 					<Input
 						label={'סוג החומר'}

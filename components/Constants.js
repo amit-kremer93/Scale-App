@@ -1,5 +1,6 @@
 // <~~ Invoice generetor ~~>
-export const INVOICE_TEMPLATE = `<!DOCTYPE html>
+export const generateHTMLFromJSON = (scalingObj) => {
+	return `<!DOCTYPE html>
 <html lang="he">
 <head>
 <meta charset="utf-8" />
@@ -75,6 +76,10 @@ border-top: 2px solid rgb(238, 238, 238);
 font-weight: bold;
 text-align: left;
 } 
+span{
+  direction: ltr;
+  unicode-bidi: bidi-override;
+}
    
   </style> 
   </head> 
@@ -85,8 +90,8 @@ text-align: left;
             <table> 
               <tr> 
                 <td style="text-align: right;"> 
-                  תאריך: {DATE_NOW}<br/> 
-                  שעה: {HOUR_NOW}<br/> 
+                  תאריך: ${scalingObj.DATE_NOW}<br/> 
+                  שעה: ${scalingObj.HOUR_NOW}<br/> 
                 </td>
                 <td style="text-align: left;"> 
                   קרמר-ברוש-ביתאן<br /> 
@@ -97,10 +102,10 @@ text-align: left;
  
     <tr class="information"> 
       <td colspan="2"> 
-        שם השוקל: {SCALER_NAME}<br /> 
-        מספר טלפון: {SCALER_PHONE}<br /> 
-        מקור: {ORIGIN} <br> 
-        יעד: {DESTINATION} <br>
+        שם השוקל: ${scalingObj.SCALER_NAME}<br /> 
+        מספר טלפון: ${scalingObj.SCALER_PHONE}<br /> 
+        מקור: ${scalingObj.ORIGIN} <br> 
+        יעד: ${scalingObj.DESTINATION} <br>
       </td>
     </tr>
    
@@ -111,12 +116,12 @@ text-align: left;
    
       <tr class="item"> 
         <td>סוג החומר</td> 
-        <td>{MATERIAL_TYPE}</td> 
+        <td>${scalingObj.MATERIAL_TYPE}</td> 
       </tr> 
    
       <tr class="item"> 
         <td>פרטים נוספים</td> 
-        <td>{MORE_INFO}</td> 
+        <td>${scalingObj.MORE_INFO}</td> 
       </tr> 
    
       <tr class="heading"> 
@@ -126,42 +131,29 @@ text-align: left;
    
       <tr class="item"> 
         <td>מספר רכב</td>
-        <td>{VEHICLE_NUMBER}</td>  
+        <td>${scalingObj.VEHICLE_NUMBER}</td>  
       </tr>  
       <tr class="item"> 
         <td>שם הנהג</td> 
-        <td>{DRIVER_NAME}</td> 
+        <td>${scalingObj.DRIVER_NAME}</td> 
       </tr> 
       <tr class="item"> 
         <td>משקל ברוטו</td> 
-        <td>{TOTAL_WEIGHT}</td> 
+        <td>${scalingObj.TOTAL_WEIGHT}</td> 
       </tr> 
       <tr class="item"> 
         <td>משקל טרה</td> 
-        <td>{TARE_WEIGHT}</td> 
+        <td>${scalingObj.TARE_WEIGHT}</td> 
       </tr> 
       <tr class="total">
         <td></td>
-        <td>משקל נטו: {NET_WEIGHT} ק״ג</td> 
+        <td>משקל נטו: <span>${scalingObj.NET_WEIGHT}</span> ק״ג</td> 
       </tr> 
     </table> 
   </div> 
 </body>
 </html>`;
-
-export const DATE_NOW = '{DATE_NOW}';
-export const HOUR_NOW = '{HOUR_NOW}';
-export const SCALER_NAME = '{SCALER_NAME}';
-export const SCALER_PHONE = '{SCALER_PHONE}';
-export const ORIGIN = '{ORIGIN}';
-export const DESTINATION = '{DESTINATION}';
-export const MATERIAL_TYPE = '{MATERIAL_TYPE}';
-export const MORE_INFO = '{MORE_INFO}';
-export const VEHICLE_NUMBER = '{VEHICLE_NUMBER}';
-export const DRIVER_NAME = '{DRIVER_NAME}';
-export const TOTAL_WEIGHT = '{TOTAL_WEIGHT}';
-export const TARE_WEIGHT = '{TARE_WEIGHT}';
-export const NET_WEIGHT = '{NET_WEIGHT}';
+};
 
 //<~~ Firebase ~~>
 export const USERS_DB = 'Users';
