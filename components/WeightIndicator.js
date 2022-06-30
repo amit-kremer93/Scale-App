@@ -41,13 +41,14 @@ const styles = StyleSheet.create({
 		color: 'white',
 		textAlign: 'center',
 		fontSize: 50,
-		top: '15%',
 	},
 	linearGradient: {
 		flex: 1,
 		backgroundColor: '#1890ff',
 		borderBottomLeftRadius: 100,
 		borderBottomRightRadius: 100,
+		alignContent: 'center',
+		justifyContent: 'center',
 	},
 
 	saveWeightButton: {

@@ -210,6 +210,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 							בחר מתוך רשימה
 						</Text>
 						<Switch
+							style={{ marginHorizontal: 20 }}
 							value={manualTruckInputSelected}
 							onValueChange={() => {
 								setManualTruckInputSelected(!manualTruckInputSelected);
@@ -233,7 +234,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 							onChangeText={(e) => setVehicleNumber(e)}
 						/>
 					) : (
-						<View style={{ flexDirection: 'column', alignContent: 'flex-start', justifyContent: 'center', alignItems: 'flex-end', width: '100%', borderColor: '#e6e5ea', borderWidth: 2, borderRadius: 20, marginBottom: 30 }}>
+						<View style={{ flexDirection: 'column', alignContent: 'flex-start', justifyContent: 'center', alignItems: 'flex-end', width: '100%', borderColor: '#e6e5ea', borderWidth: 2, borderRadius: 20, marginBottom: 30, padding: 20 }}>
 							{Object.keys(truckList).map((truck) => (
 								<View key={truck} style={{ flexDirection: 'row', marginVertical: 10 }}>
 									<Text style={{ fontSize: 16, marginRight: 10 }}>{truck}</Text>
