@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import { View, StyleSheet, ScrollView, Text, PermissionsAndroid } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, PermissionsAndroid, Platform } from 'react-native';
 import { Button, Input, Switch } from 'react-native-elements';
 import CheckBox from '@react-native-community/checkbox';
 import storage from '@react-native-firebase/storage';
@@ -32,7 +32,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tareWeight]);
 
-	const requestCameraPermission = async () => {
+	const requestWriteToFilePermission = async () => {
 		setButtonLoading(true);
 		try {
 			const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
@@ -210,6 +210,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 							בחר מתוך רשימה
 						</Text>
 						<Switch
+							style={{ marginHorizontal: 20 }}
 							value={manualTruckInputSelected}
 							onValueChange={() => {
 								setManualTruckInputSelected(!manualTruckInputSelected);
@@ -233,7 +234,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 							onChangeText={(e) => setVehicleNumber(e)}
 						/>
 					) : (
-						<View style={{ flexDirection: 'column', alignContent: 'flex-start', justifyContent: 'center', alignItems: 'flex-end', width: '100%', borderColor: '#e6e5ea', borderWidth: 2, borderRadius: 20, marginBottom: 30 }}>
+						<View style={{ flexDirection: 'column', alignContent: 'flex-start', justifyContent: 'center', alignItems: 'flex-end', width: '100%', borderColor: '#e6e5ea', borderWidth: 2, borderRadius: 20, marginBottom: 30, padding: 20 }}>
 							{Object.keys(truckList).map((truck) => (
 								<View key={truck} style={{ flexDirection: 'row', marginVertical: 10 }}>
 									<Text style={{ fontSize: 16, marginRight: 10 }}>{truck}</Text>
@@ -286,7 +287,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 						buttonStyle={styles.saveNewInvoiceButton}
 						title={' שמור '}
 						onPress={() => {
-							requestCameraPermission();
+							Platform.OS == 'android' ? requestWriteToFilePermission() : generateInvoiceWithParameters();
 						}}
 					/>
 				</View>
