@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
-import { View, StyleSheet, ScrollView, Text, PermissionsAndroid } from 'react-native';
+import { View, StyleSheet, ScrollView, Text, PermissionsAndroid, Platform } from 'react-native';
 import { Button, Input, Switch } from 'react-native-elements';
 import CheckBox from '@react-native-community/checkbox';
 import storage from '@react-native-firebase/storage';
@@ -32,7 +32,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [tareWeight]);
 
-	const requestCameraPermission = async () => {
+	const requestWriteToFilePermission = async () => {
 		setButtonLoading(true);
 		try {
 			const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE, {
@@ -287,7 +287,7 @@ const InvoiceGenerator = ({ route, navigation }) => {
 						buttonStyle={styles.saveNewInvoiceButton}
 						title={' שמור '}
 						onPress={() => {
-							requestCameraPermission();
+							Platform.OS == 'android' ? requestWriteToFilePermission() : generateInvoiceWithParameters();
 						}}
 					/>
 				</View>
